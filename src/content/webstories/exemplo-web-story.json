@@ -1,0 +1,42 @@
+{
+  "title": "Exemplo de Web Story",
+  "publish_status": "publish",
+  "logo_url": "https://i.postimg.cc/Gpzy7hj6/LOGO-1.png",
+  "poster_portrait": "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=640&h=853&fit=crop",
+  "cta_text": "Saiba Mais",
+  "cta_link": "https://example.com",
+  "cta_position": "last_page",
+  "cta_color": "#3B82F6",
+  "ads": {
+    "publisher_code": "",
+    "ad_slot": ""
+  },
+  "pages": [
+    {
+      "image_url": "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=720&h=1280&fit=crop",
+      "page_title": "Bem-vindo ao Web Stories",
+      "page_text": "Descubra como criar conteúdo visual envolvente para seu blog."
+    },
+    {
+      "image_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=720&h=1280&fit=crop",
+      "page_title": "Design Responsivo",
+      "page_text": "Stories que ficam perfeitos em qualquer dispositivo móvel."
+    },
+    {
+      "image_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=720&h=1280&fit=crop",
+      "page_title": "Engajamento",
+      "page_text": "Aumente o tempo de permanência com conteúdo interativo."
+    },
+    {
+      "image_url": "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=720&h=1280&fit=crop",
+      "page_title": "SEO Otimizado",
+      "page_text": "Web Stories aparecem no Google Discover e buscas."
+    },
+    {
+      "image_url": "https://images.unsplash.com/photo-1553484771-371a605b060b?w=720&h=1280&fit=crop",
+      "page_title": "Comece Agora!",
+      "page_text": "Crie seu primeiro Web Story e alcance mais leitores."
+    }
+  ],
+  "createdAt": "2026-02-05"
+}

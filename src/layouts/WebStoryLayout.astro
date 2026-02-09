@@ -1,0 +1,155 @@
+---
+// WebStoryLayout.astro - Gera página AMP válida para Web Stories
+import { SITE_TITLE, SITE_LANGUAGE } from '../consts';
+
+interface StoryPage {
+  image_url: string;
+  page_title?: string;
+  page_text?: string;
+}
+
+interface Props {
+  title: string;
+  logo_url: string;
+  poster_portrait: string;
+  poster_square?: string;
+  cta_text?: string;
+  cta_link?: string;
+  cta_position?: 'all_pages' | 'last_page' | 'none';
+  cta_color?: string;
+  ads?: {
+    publisher_code?: string;
+    ad_slot?: string;
+  };
+  pages: StoryPage[];
+}
+
+const { 
+  title, 
+  logo_url, 
+  poster_portrait, 
+  poster_square,
+  cta_text, 
+  cta_link, 
+  cta_position = 'all_pages',
+  cta_color = '#3B82F6',
+  ads,
+  pages 
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const publisherName = SITE_TITLE;
+const lang = SITE_LANGUAGE || 'pt-BR';
+---
+<!doctype html>
+<html amp lang={lang}>
+<head>
+  <meta charset="utf-8">
+  <title>{title}</title>
+  <link rel="canonical" href={canonicalURL}>
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  
+  <!-- AMP Scripts -->
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <script async custom-element="amp-story" src="https://cdn.ampproject.org/v0/amp-story-1.0.js"></script>
+  
+  {cta_text && cta_link && (
+    <script async custom-element="amp-story-page-attachment" src="https://cdn.ampproject.org/v0/amp-story-page-attachment-0.1.js"></script>
+  )}
+  
+  {ads?.publisher_code && (
+    <script async custom-element="amp-story-auto-ads" src="https://cdn.ampproject.org/v0/amp-story-auto-ads-0.1.js"></script>
+  )}
+  
+  <!-- AMP Boilerplate (obrigatório) -->
+  <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
+  <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+  
+  <!-- Custom Styles -->
+  <style amp-custom>
+    amp-story-page {
+      background: #000;
+    }
+    .page-content {
+      padding: 16px;
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      margin-bottom: 8px;
+    }
+    .page-text {
+      font-size: 16px;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <amp-story 
+    standalone
+    title={title}
+    publisher={publisherName}
+    publisher-logo-src={logo_url}
+    poster-portrait-src={poster_portrait}
+    poster-square-src={poster_square || poster_portrait}
+  >
+    {ads?.publisher_code && (
+      <amp-story-auto-ads>
+        <script type="application/json" set:html={JSON.stringify({
+          "ad-attributes": {
+            "type": "adsense",
+            "data-ad-client": ads.publisher_code,
+            "data-ad-slot": ads.ad_slot || ""
+          }
+        })} />
+      </amp-story-auto-ads>
+    )}
+
+    {pages.map((page, index) => {
+      const isLastPage = index === pages.length - 1;
+      const showCta = cta_text && cta_link && (
+        cta_position === 'all_pages' || 
+        (cta_position === 'last_page' && isLastPage)
+      );
+      
+      return (
+        <amp-story-page id={`page-${index + 1}`}>
+          <amp-story-grid-layer template="fill">
+            <amp-img 
+              src={page.image_url}
+              width="720" 
+              height="1280"
+              layout="responsive"
+              alt={page.page_title || `Slide ${index + 1}`}
+            />
+          </amp-story-grid-layer>
+          
+          {(page.page_title || page.page_text) && (
+            <amp-story-grid-layer template="thirds">
+              <div class="page-content" grid-area="lower-third">
+                {page.page_title && (
+                  <h2 class="page-title">{page.page_title}</h2>
+                )}
+                {page.page_text && (
+                  <p class="page-text">{page.page_text}</p>
+                )}
+              </div>
+            </amp-story-grid-layer>
+          )}
+          
+          {showCta && (
+            <amp-story-page-outlink layout="nodisplay" cta-text={cta_text}>
+              <a href={cta_link}>{cta_text}</a>
+            </amp-story-page-outlink>
+          )}
+        </amp-story-page>
+      );
+    })}
+  </amp-story>
+</body>
+</html>

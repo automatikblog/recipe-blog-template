@@ -1,0 +1,140 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { SITE_TITLE } from '../../consts';
+
+const allStories = await getCollection('webstories');
+const publishedStories = allStories
+  .filter(story => story.data.publish_status !== 'draft')
+  .sort((a, b) => {
+    const dateA = a.data.createdAt ? new Date(a.data.createdAt).getTime() : 0;
+    const dateB = b.data.createdAt ? new Date(b.data.createdAt).getTime() : 0;
+    return dateB - dateA;
+  });
+---
+
+<Base title="Web Stories" description={`Confira os Web Stories de ${SITE_TITLE}`}>
+  <main class="stories-page">
+    <h1>Web Stories</h1>
+    
+    {publishedStories.length === 0 ? (
+      <p class="no-stories">Nenhum Web Story publicado ainda.</p>
+    ) : (
+      <div class="stories-grid">
+        {publishedStories.map((story) => (
+          <a href={`/webstories/${story.id}/`} class="story-card">
+            <div class="story-poster">
+              <img 
+                src={story.data.poster_portrait} 
+                alt={story.data.title}
+                loading="lazy"
+              />
+              <div class="story-overlay">
+                <span class="play-icon">▶</span>
+              </div>
+            </div>
+            <h3 class="story-title">{story.data.title}</h3>
+          </a>
+        ))}
+      </div>
+    )}
+  </main>
+</Base>
+
+<style>
+  .stories-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .no-stories {
+    text-align: center;
+    color: #666;
+    padding: 3rem;
+  }
+  
+  .stories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .story-card {
+    text-decoration: none;
+    color: inherit;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .story-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  
+  .story-poster {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9/16;
+    overflow: hidden;
+  }
+  
+  .story-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .story-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  
+  .story-card:hover .story-overlay {
+    opacity: 1;
+  }
+  
+  .play-icon {
+    font-size: 2rem;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  
+  .story-title {
+    padding: 0.75rem;
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  @media (max-width: 600px) {
+    .stories-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    
+    .story-title {
+      font-size: 0.85rem;
+    }
+  }
+</style>

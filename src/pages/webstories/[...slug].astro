@@ -1,0 +1,18 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import WebStoryLayout from '../../layouts/WebStoryLayout.astro';
+
+export async function getStaticPaths() {
+  const stories = await getCollection('webstories');
+  return stories.map((story) => ({
+    params: { slug: story.id },
+    props: story,
+  }));
+}
+
+type Props = CollectionEntry<'webstories'>;
+
+const story = Astro.props;
+---
+
+<WebStoryLayout {...story.data} />
