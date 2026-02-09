@@ -1,0 +1,28 @@
+---
+const { post } = Astro.props;
+const { title, heroImage, category, pubDate, authorName, prepTime, servings } = post.data;
+---
+
+<article class="recipe-card">
+  <a href={`/blog/${post.slug}/`} class="recipe-card-link">
+    <div class="recipe-card-image">
+      <img src={heroImage || '/placeholder-recipe.jpg'} alt={title} loading="lazy" />
+      <span class="recipe-card-category">{category || 'Receita'}</span>
+    </div>
+    <div class="recipe-card-content">
+      <h3 class="recipe-card-title">{title}</h3>
+      <div class="recipe-card-meta">
+        <span class="recipe-author">{authorName || 'Chef'}</span>
+        <time datetime={pubDate.toISOString()}>
+          {pubDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+        </time>
+      </div>
+      {(prepTime || servings) && (
+        <div class="recipe-card-info">
+          {prepTime && <span class="recipe-info-item">⏱ {prepTime}</span>}
+          {servings && <span class="recipe-info-item">🍽 {servings} porções</span>}
+        </div>
+      )}
+    </div>
+  </a>
+</article>
